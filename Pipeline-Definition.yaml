@@ -34,4 +34,22 @@ stages:
             parametroUm: $(PipelineVariableDentroDoGrupo)
             parametroDois: ${{variables.PipelineLocalVariable}}
             parametroTres: 'Sou um parametro que não veio de uma variavel de grupo nem de uma variavel local no pipeline'
+
+  - stage: Deploy
+    dependsOn: Build
+    condition: succeeded()
+    displayName: Deploy
+    jobs:      
+      - deployment: DeployApproval
+        displayName: 'Approval Deploy To PRD'
+        environment: ApprovalGate
+		
+      - job: DeployToPRD
+        displayName: Deploy To PRD
+        pool:
+          vmImage: 'ubuntu-20.04'
+        steps:
+        - script: |
+            echo Tudo Certo, a etapa anterior foi aprovada e executada com sucesso.
+            echo Neste momento vamos para o Deploy ;)
 ...
