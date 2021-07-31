@@ -1,0 +1,37 @@
+---
+variables:
+- group: "PipelineGrupoDeVariavel"
+- name: PipelineLocalVariable
+  value: 'Ola, sou uma variavel definida no pipeline'
+
+resources:
+  repositories:
+    - repository: edsonjrmorais/the-awesome-templates
+      type: github
+      ref: refs/heads/main
+      name: AwesomeCompanyTemplates
+      endpoint: ServiceConnectToGitHub
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - the-awesome-project/Pipeline-Definition.yaml
+
+stages:
+  - stage: Build
+    displayName: Build
+    jobs: 
+      - job: JobUm
+        displayName: Job Um
+        pool:
+          vmImage: 'windows-2019'
+        steps:
+        - template: build.yml@edsonjrmorais/the-awesome-templates
+          parameters:
+            parametroUm: $(PipelineVariableDentroDoGrupo)
+            parametroDois: ${{variables.PipelineLocalVariable}}
+            parametroTres: 'Sou um parametro que não veio de uma variavel de grupo nem de uma variavel local no pipeline'
+...
